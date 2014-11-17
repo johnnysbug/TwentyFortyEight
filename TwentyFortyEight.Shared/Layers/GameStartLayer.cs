@@ -1,6 +1,7 @@
 ﻿using CocosSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace TwentyFortyEight.Shared.Layers
 {
@@ -10,9 +11,12 @@ namespace TwentyFortyEight.Shared.Layers
 		const int GRID_SIZE = 4;
 		const int WIN_TILE = 2048;
 
-		const int SCORE_X_OFFSET = 200;
+		const int SCORE_X_OFFSET = 270;
 
 		readonly Tile[,] gridArray = new Tile[GRID_SIZE, GRID_SIZE];
+
+		readonly CCSequence rotate = new CCSequence(new CCRotateBy (0.2f, 45), new CCDelayTime(0.2f), new CCRotateBy (0.2f, -95));
+		CCCallFuncN removeTile = new CCCallFuncN (node => node.RemoveFromParent ());
 
 		float tileMarginHorizontal;
 		float tileMarginVertical;
@@ -50,6 +54,10 @@ namespace TwentyFortyEight.Shared.Layers
 			grid.Position = VisibleBoundsWorldspace.Center;
 			grid.ContentSize = new CCSize(900, 900);
 
+			var header = new CCSprite("header");
+
+			header.Position = VisibleBoundsWorldspace.Center.Offset(0, 480);
+
 			var scoreTextLabel = new CCLabel("Score", "Lato-Black", 42);
 			var highScoreTextLabel = new CCLabel("High Score", "Lato-Black", 42);
 			scoreLabel = new CCLabel(Score.ToString(), "Lato-Black", 144);
@@ -83,6 +91,7 @@ namespace TwentyFortyEight.Shared.Layers
 			AddChild(scoreLabel);
 			AddChild(highScoreLabel);
 			AddChild (grid);
+			AddChild(header);
 		}
 
 		public int Score
@@ -125,8 +134,8 @@ namespace TwentyFortyEight.Shared.Layers
 					//  iterate through each column in the current row
 					var backgroundTile =  new CCSprite("empty");
 					backgroundTile.ContentSize = new CCSize(columnWidth, columnHeight);
-					backgroundTile.AnchorPoint = CCPoint.AnchorLowerLeft;
-					backgroundTile.Position = new CCPoint(x, y);
+					backgroundTile.AnchorPoint = CCPoint.AnchorMiddle;
+					backgroundTile.Position = new CCPoint(x + columnWidth / 2, y + columnHeight / 2);
 					grid.AddChild(backgroundTile);
 					x+= columnWidth + tileMarginHorizontal;
 				}
@@ -201,7 +210,7 @@ namespace TwentyFortyEight.Shared.Layers
 
 		void AddTileAtColumn(int column, int row)
 		{
-			var number = (CCRandom.GetRandomInt(2, 4) % 2 + 1) * 2;
+			var number = (new CCFastRandom().NextInt() % 2 + 1) * 2;
 			var tile = new Tile(number);
 			gridArray[column, row] = tile;
 			tile.Scale = 0.0f;
@@ -217,7 +226,7 @@ namespace TwentyFortyEight.Shared.Layers
 		{
 			var x = tileMarginHorizontal + column * (tileMarginHorizontal + columnWidth);
 			var y = tileMarginVertical + row * (tileMarginVertical + columnHeight);
-			return new CCPoint(x, y);
+			return new CCPoint(x + columnWidth / 2, y + columnHeight / 2);
 		}
 
 		bool IsIndexValidAndUnoccupied(int x, int y) 
@@ -359,6 +368,10 @@ namespace TwentyFortyEight.Shared.Layers
 			if (movedTilesThisRound) {
 				NextRound();
 			}
+			if (!IsMovePossible())
+			{
+				Lose();
+			}
 		}
 
 		void MoveTile(CCNode tile, int currentX, int currentY, int newX, int newY)
@@ -465,7 +478,21 @@ namespace TwentyFortyEight.Shared.Layers
 
 		void Lose()
 		{
-			//throw new NotImplementedException();
+			for (var column = GRID_SIZE - 1; column > -1; column--)
+			{
+				for (var row = GRID_SIZE - 1; row > -1; row--)
+				{
+					var tile = gridArray[column, row];
+					tile.AnchorPoint = CCPoint.AnchorUpperLeft;
+					var newPosition = PositionForColumn(column, row);
+					newPosition.Y = 0;
+					var delay = new CCDelayTime(1.0f);
+					var moveTo = new CCMoveTo(1.8f, newPosition);
+					tile.RunActions(delay, moveTo, removeTile);
+					tile.RepeatForever(rotate);
+
+				}
+			}
 		}
 	}
 }
