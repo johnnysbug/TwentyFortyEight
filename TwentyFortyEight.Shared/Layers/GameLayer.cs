@@ -5,7 +5,7 @@ using CocosDenshion;
 
 namespace TwentyFortyEight.Shared.Layers
 {
-	public class GameStartLayer : CCLayerColor
+	public class GameLayer : CCLayerColor
 	{
 		const int START_TILES = 2;
 		const int GRID_SIZE = 4;
@@ -29,19 +29,20 @@ namespace TwentyFortyEight.Shared.Layers
 
 		float columnHeight;
 		float columnWidth;
-		int score;
+		int score, highScore;
 
 		CCSprite grid;
 		CCLabel scoreLabel;
 		CCLabel highScoreLabel;
+
 		Tile emptyTile = new Tile();
 
-		public static CCScene GameStartLayerScene (CCWindow mainWindow)
+		public static CCScene GameLayerScene (CCWindow mainWindow)
 		{
 			mainWindow.SetDesignResolutionSize(1080, 1920, CCSceneResolutionPolicy.ShowAll);
 
 			var scene = new CCScene (mainWindow);
-			var layer = new GameStartLayer();
+			var layer = new GameLayer();
 			layer.Color = new CCColor3B(new CCColor4B(13.0f/255.0f, 107.0f/255.0f, 142.0f/255.0f, 1.0f));
 			layer.Opacity = 255;
 			scene.AddChild (layer);
@@ -68,6 +69,12 @@ namespace TwentyFortyEight.Shared.Layers
 			var highScoreTextLabel = new CCLabel("High Score", "Lato-Black", 42);
 			scoreLabel = new CCLabel(Score.ToString(), "Lato-Black", 144);
 			highScoreLabel = new CCLabel(Score.ToString(), "Lato-Black", 144);
+
+			var savedScore = CCUserDefault.SharedUserDefault.GetIntegerForKey("highscore");
+			if (savedScore > 0)
+			{
+				highScoreLabel.Text = savedScore.ToString();
+			}
 
 			scoreTextLabel.Color = new CCColor3B(CCColor4B.White);
 			highScoreTextLabel.Color = new CCColor3B(CCColor4B.White);
@@ -113,9 +120,28 @@ namespace TwentyFortyEight.Shared.Layers
 			}
 		}
 
+		public int HighScore
+		{
+			get
+			{
+				return highScore;
+			}
+			set
+			{
+				highScore = value;
+				UpdateHighScore(highScore);
+				CCUserDefault.SharedUserDefault.SetIntegerForKey("highscore", highScore);
+			}
+		}
+
 		void UpdateScore(int newScore)
 		{
 			scoreLabel.Text = newScore.ToString();
+		}
+
+		void UpdateHighScore(int newScore)
+		{
+			highScoreLabel.Text = newScore.ToString();
 		}
 
 		void SetupBackground()
@@ -485,6 +511,26 @@ namespace TwentyFortyEight.Shared.Layers
 
 		void Lose()
 		{
+			var loseSprite = new CCSprite("lose") { ContentSize = new CCSize(900, 900), AnchorPoint = CCPoint.AnchorMiddle, Position = VisibleBoundsWorldspace.Center };
+			loseSprite.Scale = 0;
+			AddChild(loseSprite);
+
+			var loseTapListener = new CCEventListenerTouchAllAtOnce();
+			loseTapListener.OnTouchesEnded = (touches, args) =>
+			{
+				if (touches.Count == 1)
+				{
+					loseSprite.RemoveEventListeners();
+					loseSprite.RunActions(new CCScaleTo(0.2f, 0), new CCCallFuncN((node) => { node.RemoveFromParent(); }));
+					Score = 0;
+					grid.RemoveAllChildren(true);
+					InitializeGridArray();
+					SpawnStartTiles();
+				}
+			};
+
+			loseSprite.AddEventListener(loseTapListener);
+
 			var actions = new List<CCFiniteTimeAction>();
 			var delay = new CCDelayTime(0.1f);
 			for (var column = GRID_SIZE - 1; column > -1; column--)
@@ -501,8 +547,17 @@ namespace TwentyFortyEight.Shared.Layers
 
 				}
 			}
+
+			var scaleUp = new CCScaleTo(0.3f, 1.0f);
+
 			actions.Shuffle();
+			actions.Add(new CCTargetedAction(loseSprite, scaleUp));
 			grid.RunActions(actions.ToArray());
+
+			if (Score > HighScore)
+			{
+				UpdateHighScore(Score);
+			}
 		}
 	}
 }

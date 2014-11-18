@@ -9,10 +9,10 @@
     <Import_RootNamespace>TwentyFortyEight.Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)Layers\GameStartLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TwentyFortyEightApplicationDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tile.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Layers\GameLayer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Layers\" />

@@ -130,6 +130,7 @@
     <BundleResource Include="Content\fonts\Lato-Black.ttf" />
     <BundleResource Include="Content\hd\header.png" />
     <BundleResource Include="Content\sheet.mp3" />
+    <BundleResource Include="Content\hd\lose.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

@@ -15,7 +15,7 @@ namespace TwentyFortyEight.Shared
 
 			//CCSimpleAudioEngine.SharedEngine.PreloadEffect("Sounds/tap");
 
-			var scene = GameStartLayer.GameStartLayerScene(mainWindow);
+			var scene = GameLayer.GameLayerScene(mainWindow);
 			mainWindow.RunWithScene (scene);
 		}
 
