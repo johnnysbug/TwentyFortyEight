@@ -1,6 +1,7 @@
 ﻿using CocosSharp;
 using System;
 using System.Collections.Generic;
+using CocosDenshion;
 
 namespace TwentyFortyEight.Shared.Layers
 {
@@ -14,8 +15,14 @@ namespace TwentyFortyEight.Shared.Layers
 
 		readonly Tile[,] gridArray = new Tile[GRID_SIZE, GRID_SIZE];
 
-		readonly CCSequence rotate = new CCSequence(new CCRotateBy (0.2f, 45), new CCDelayTime(0.2f), new CCRotateBy (0.2f, -95));
-		CCCallFuncN removeTile = new CCCallFuncN (node => node.RemoveFromParent ());
+		readonly CCSequence rotate = new CCSequence(
+			                             new CCRotateBy(0.3f, 10),
+			                             new CCDelayTime(0.01f),
+			                             new CCRotateBy(0.3f, -20),
+			                             new CCDelayTime(0.01f),
+			                             new CCRotateBy(0.01f, 5),
+			                             new CCDelayTime(0.01f));
+		readonly CCCallFuncN removeTile = new CCCallFuncN (node => node.RemoveFromParent ());
 
 		float tileMarginHorizontal;
 		float tileMarginVertical;
@@ -379,6 +386,7 @@ namespace TwentyFortyEight.Shared.Layers
 			gridArray[currentX, currentY] = emptyTile;
 			var newPosition = PositionForColumn(newX, newY);
 			var moveTo = new CCMoveTo(0.2f, newPosition);
+			//CCSimpleAudioEngine.SharedEngine.PlayEffect ("sheet");
 			tile.RunAction(moveTo);
 		}
 
@@ -477,21 +485,24 @@ namespace TwentyFortyEight.Shared.Layers
 
 		void Lose()
 		{
+			var actions = new List<CCFiniteTimeAction>();
+			var delay = new CCDelayTime(0.1f);
 			for (var column = GRID_SIZE - 1; column > -1; column--)
 			{
 				for (var row = GRID_SIZE - 1; row > -1; row--)
 				{
 					var tile = gridArray[column, row];
-					tile.AnchorPoint = CCPoint.AnchorUpperLeft;
 					var newPosition = PositionForColumn(column, row);
-					newPosition.Y = 0;
-					var delay = new CCDelayTime(1.0f);
-					var moveTo = new CCMoveTo(1.8f, newPosition);
-					tile.RunActions(delay, moveTo, removeTile);
+					newPosition.Y = -1000;
+					var moveTo = new CCMoveTo(0.4f, newPosition);
+					var sequence = new CCSequence(delay, moveTo, removeTile);
+					actions.Add(new CCTargetedAction(tile, sequence));
 					tile.RepeatForever(rotate);
 
 				}
 			}
+			actions.Shuffle();
+			grid.RunActions(actions.ToArray());
 		}
 	}
 }

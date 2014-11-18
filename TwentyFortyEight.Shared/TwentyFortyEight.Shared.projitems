@@ -12,6 +12,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Layers\GameStartLayer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)TwentyFortyEightApplicationDelegate.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Tile.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Layers\" />
