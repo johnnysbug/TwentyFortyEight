@@ -46,6 +46,11 @@ namespace TwentyFortyEight.Shared
 			_numberSprite = sprite;
 			AddChild(_numberSprite);
 		}
+
+		public override string ToString()
+		{
+			return string.Format("[Tile: Value={0}, MergedThisRound={1}]", Value, MergedThisRound);
+		}
 	}
 }
 

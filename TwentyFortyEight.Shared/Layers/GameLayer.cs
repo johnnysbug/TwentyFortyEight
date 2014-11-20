@@ -1,7 +1,6 @@
 ﻿using CocosSharp;
 using System;
 using System.Collections.Generic;
-using CocosDenshion;
 
 namespace TwentyFortyEight.Shared.Layers
 {
@@ -15,10 +14,10 @@ namespace TwentyFortyEight.Shared.Layers
 
 		readonly Tile[,] gridArray = new Tile[GRID_SIZE, GRID_SIZE];
 
-		readonly CCSequence rotate = new CCSequence(
-			                             new CCRotateBy(0.3f, 10),
+		readonly CCSequence wobble = new CCSequence(
+			                             new CCRotateBy(0.2f, 10),
 			                             new CCDelayTime(0.01f),
-			                             new CCRotateBy(0.3f, -20),
+			                             new CCRotateBy(0.2f, -20),
 			                             new CCDelayTime(0.01f),
 			                             new CCRotateBy(0.01f, 5),
 			                             new CCDelayTime(0.01f));
@@ -30,6 +29,8 @@ namespace TwentyFortyEight.Shared.Layers
 		float columnHeight;
 		float columnWidth;
 		int score, highScore;
+
+		bool moving;
 
 		CCSprite grid;
 		CCLabel scoreLabel;
@@ -131,6 +132,7 @@ namespace TwentyFortyEight.Shared.Layers
 				highScore = value;
 				UpdateHighScore(highScore);
 				CCUserDefault.SharedUserDefault.SetIntegerForKey("highscore", highScore);
+				CCUserDefault.SharedUserDefault.Flush();
 			}
 		}
 
@@ -184,7 +186,7 @@ namespace TwentyFortyEight.Shared.Layers
 
 		void HandleTouchesMoved(List<CCTouch> touches, CCEvent touchEvent)
 		{
-			if (touches.Count == 1)
+			if (touches.Count == 1 && !moving)
 			{
 				var xDiff = touches[0].Delta.X;
 				var yDiff = touches[0].Delta.Y;
@@ -297,6 +299,8 @@ namespace TwentyFortyEight.Shared.Layers
 
 		void Move(CCPoint direction)
 		{
+			moving = true;
+
 			var movedTilesThisRound = false;
 			// apply negative vector until reaching boundary, this way 
 			// we get the tile that is the furthest away bottom left corner
@@ -400,10 +404,11 @@ namespace TwentyFortyEight.Shared.Layers
 			if (movedTilesThisRound) {
 				NextRound();
 			}
-			if (!IsMovePossible())
+			else if (!IsMovePossible())
 			{
 				Lose();
 			}
+			moving = false;
 		}
 
 		void MoveTile(CCNode tile, int currentX, int currentY, int newX, int newY)
@@ -440,11 +445,11 @@ namespace TwentyFortyEight.Shared.Layers
 
 		bool IsMovePossible()
 		{
-			for (int i = 0; i < GRID_SIZE; i++)
+			for (int x = 0; x < GRID_SIZE; x++)
 			{
-				for (int j = 0; j < GRID_SIZE; j++)
+				for (int y = 0; y < GRID_SIZE; y++)
 				{
-					var tile = gridArray[i, j];
+					var tile = gridArray[x, y];
 					// no tile at this position
 					if (tile == emptyTile)
 					{
@@ -454,10 +459,10 @@ namespace TwentyFortyEight.Shared.Layers
 					else
 					{
 						// there is a tile at this position. Check if this tile could move
-						var topNeighbor = TileForIndex(i, j + 1);
-						var bottomNeighbor = TileForIndex(i, j - 1);
-						var leftNeighbor = TileForIndex(i - 1, j);
-						var rightNeighbor = TileForIndex(i + 1, j);
+						var topNeighbor = TileForIndex(x, y + 1);
+						var bottomNeighbor = TileForIndex(x, y - 1);
+						var leftNeighbor = TileForIndex(x - 1, y);
+						var rightNeighbor = TileForIndex(x + 1, y);
 						var neighors = new [] { topNeighbor, bottomNeighbor, leftNeighbor, rightNeighbor };
 						foreach (var neighborTile in neighors)
 						{
@@ -529,10 +534,9 @@ namespace TwentyFortyEight.Shared.Layers
 				}
 			};
 
-			loseSprite.AddEventListener(loseTapListener);
 
 			var actions = new List<CCFiniteTimeAction>();
-			var delay = new CCDelayTime(0.1f);
+			var delay = new CCDelayTime(0.01f);
 			for (var column = GRID_SIZE - 1; column > -1; column--)
 			{
 				for (var row = GRID_SIZE - 1; row > -1; row--)
@@ -540,24 +544,27 @@ namespace TwentyFortyEight.Shared.Layers
 					var tile = gridArray[column, row];
 					var newPosition = PositionForColumn(column, row);
 					newPosition.Y = -1000;
-					var moveTo = new CCMoveTo(0.4f, newPosition);
+					var moveTo = new CCMoveTo(0.2f, newPosition);
 					var sequence = new CCSequence(delay, moveTo, removeTile);
 					actions.Add(new CCTargetedAction(tile, sequence));
-					tile.RepeatForever(rotate);
-
+					tile.Repeat(10, wobble);
 				}
 			}
 
 			var scaleUp = new CCScaleTo(0.3f, 1.0f);
+			var initialDelay = new CCDelayTime(1.5f);
 
 			actions.Shuffle();
 			actions.Add(new CCTargetedAction(loseSprite, scaleUp));
+			actions.Insert(0, initialDelay);
 			grid.RunActions(actions.ToArray());
 
 			if (Score > HighScore)
 			{
 				UpdateHighScore(Score);
 			}
+
+			loseSprite.AddEventListener(loseTapListener);
 		}
 	}
 }
