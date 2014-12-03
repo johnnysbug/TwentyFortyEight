@@ -8,7 +8,7 @@ using TwentyFortyEight.Shared;
 namespace TwentyFortyEight.Droid
 {
 	[Activity(
-		Label = "TwentyFortyEight.Droid",
+		Label = "LeanKit2048",
 		AlwaysRetainTaskState = true,
 		Icon = "@drawable/icon",
 		Theme = "@android:style/Theme.NoTitleBar",

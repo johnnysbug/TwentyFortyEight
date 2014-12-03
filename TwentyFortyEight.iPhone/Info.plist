@@ -8,12 +8,10 @@
 	<string>com.leankit.twentyfortyeight</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
-	<key>CFBundleVersion</key>
-	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>MinimumOSVersion</key>
-	<string>8.1</string>
+	<string>7.1</string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
@@ -31,5 +29,7 @@
 		<string>Icon-60@2x</string>
 		<string>Icon-Small-40@2x</string>
 	</array>
+	<key>CFBundleVersion</key>
+	<string>5</string>
 </dict>
 </plist>

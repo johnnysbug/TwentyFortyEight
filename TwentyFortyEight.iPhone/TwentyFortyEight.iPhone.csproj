@@ -22,6 +22,9 @@
     <MtouchLink>None</MtouchLink>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchDebug>true</MtouchDebug>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>i386</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator' ">
     <DebugType>full</DebugType>
@@ -32,6 +35,9 @@
     <MtouchLink>None</MtouchLink>
     <ConsolePause>false</ConsolePause>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>i386</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -50,6 +56,7 @@
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
+    <BuildIpa>true</BuildIpa>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>full</DebugType>
@@ -57,23 +64,30 @@
     <OutputPath>bin\iPhone\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <ConsolePause>false</ConsolePause>
-    <CodesignKey>iPhone Developer</CodesignKey>
+    <CodesignKey>iPhone Distribution</CodesignKey>
     <BuildIpa>true</BuildIpa>
     <IpaPackageName>
     </IpaPackageName>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Ad-Hoc|iPhone' ">
-    <DebugType>full</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\iPhone\Ad-Hoc</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ConsolePause>false</ConsolePause>
-    <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <BuildIpa>true</BuildIpa>
     <CodesignKey>iPhone Distribution</CodesignKey>
+    <IpaPackageName>
+    </IpaPackageName>
+    <MtouchI18n>
+    </MtouchI18n>
+    <MtouchArch>ARMv7</MtouchArch>
+    <CodesignProvision>Automatic:AdHoc</CodesignProvision>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'AppStore|iPhone' ">
     <DebugType>full</DebugType>
@@ -92,22 +106,22 @@
     <Reference Include="System.Core" />
     <Reference Include="monotouch" />
     <Reference Include="CocosSharp">
-      <HintPath>..\packages\CocosSharp.iOS.1.2.0.0\lib\MonoTouch10\CocosSharp.dll</HintPath>
+      <HintPath>..\packages\CocosSharp.iOS.1.2.1.0\lib\MonoTouch10\CocosSharp.dll</HintPath>
     </Reference>
     <Reference Include="ICSharpCode.SharpZipLib">
-      <HintPath>..\packages\CocosSharp.iOS.1.2.0.0\lib\MonoTouch10\ICSharpCode.SharpZipLib.dll</HintPath>
+      <HintPath>..\packages\CocosSharp.iOS.1.2.1.0\lib\MonoTouch10\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
     <Reference Include="Lidgren.Network">
-      <HintPath>..\packages\CocosSharp.iOS.1.2.0.0\lib\MonoTouch10\Lidgren.Network.dll</HintPath>
+      <HintPath>..\packages\CocosSharp.iOS.1.2.1.0\lib\MonoTouch10\Lidgren.Network.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework.Net">
-      <HintPath>..\packages\CocosSharp.iOS.1.2.0.0\lib\MonoTouch10\MonoGame.Framework.Net.dll</HintPath>
+      <HintPath>..\packages\CocosSharp.iOS.1.2.1.0\lib\MonoTouch10\MonoGame.Framework.Net.dll</HintPath>
     </Reference>
     <Reference Include="MonoGame.Framework">
-      <HintPath>..\packages\CocosSharp.iOS.1.2.0.0\lib\MonoTouch10\MonoGame.Framework.dll</HintPath>
+      <HintPath>..\packages\CocosSharp.iOS.1.2.1.0\lib\MonoTouch10\MonoGame.Framework.dll</HintPath>
     </Reference>
     <Reference Include="box2d">
-      <HintPath>..\packages\CocosSharp.iOS.1.2.0.0\lib\MonoTouch10\box2d.dll</HintPath>
+      <HintPath>..\packages\CocosSharp.iOS.1.2.1.0\lib\MonoTouch10\box2d.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
