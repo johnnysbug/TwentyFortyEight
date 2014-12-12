@@ -561,7 +561,7 @@ namespace TwentyFortyEight.Shared.Layers
 
 			if (Score > HighScore)
 			{
-				UpdateHighScore(Score);
+				HighScore = Score;
 			}
 
 			loseSprite.AddEventListener(loseTapListener);
